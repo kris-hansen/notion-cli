@@ -19,9 +19,13 @@ def captureStdOut(output):
     finally:
         sys.stdout = stdout
 
-client = NotionClient(token_v2=os.environ['NOTION_TOKEN'])
+try:
+    client = NotionClient(token_v2=os.environ['NOTION_TOKEN'])
+    page = client.get_block(os.environ['NOTION_PAGE'])
+except:
+    cprint('NOTION_TOKEN / NOTION_PAGE environment variables not set.\n', 'red')
+    
 
-page = client.get_block(os.environ['NOTION_PAGE'])
 
 parser = argparse.ArgumentParser(description='A Notion.so CLI \
 focused on simple task management')
@@ -35,9 +39,19 @@ for the current segmentid (and other environments defined by the current set of 
 
 args = parser.parse_args()
 
+def checkEnv():
+    try:
+        os.environ['NOTION_TOKEN']
+        os.environ['NOTION_PAGE']
+    except KeyError:
+        cprint('Environment variables not set', 'white')
+        exit
+
 def list():
+    checkEnv()
     n = 0 
-    cprint('{}\n'.format(page.title), 'white', attrs=['underline'])
+    cprint('\n\n{}\n'.format(page.title), 'white', attrs=['bold'])
+    cprint('#  Status Description','white',attrs=['underline'])
     for child in page.children:
         n += 1
         try:
@@ -94,6 +108,7 @@ if args.env:
     cprint('    Notion.so page: {}\n'.format(os.environ['NOTION_PAGE']), 'green')
 
 if args.list:
+    checkEnv()
     list()
 
 if args.add:
