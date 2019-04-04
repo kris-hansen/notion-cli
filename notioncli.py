@@ -60,8 +60,12 @@ def list():
             else:
                 check = '[ ]'
         except:
-            pass #not a task    
-        cprint('  {}  {}  {}.'.format(n, check, child.title), 'green')
+            pass #not a task
+        if len(str(n)) <= 1:
+            cprint('  {}   {}  {}.'.format(n, check, child.title), 'green')
+        if len(str(n)) > 1:
+            cprint('  {}  {}  {}.'.format(n, check, child.title), 'green')
+
     cprint('\n{} total tasks'.format(n), 'white', attrs=['bold'])
 
 def check(taskn):
