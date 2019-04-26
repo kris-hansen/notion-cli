@@ -1,8 +1,11 @@
 *Notion CLI*
 
-It's a CLI.
+It's a CLI to track your tasks.
 
 For Notion.so
+
+![](https://raw.githubusercontent.com/kris-hansen/notionclilist.gif)
+
 
 In the tune of taskbook (https://github.com/klaussinani/taskbook) which is an npm package that I started using and really enjoyed; but I wanted something that was more portable across my devices and that I could also shared (i.e., it needed a back end)
 
@@ -10,11 +13,17 @@ I started looking at Notion for this, but wanted to stay in CLI land vs. having 
 
 Thus, this mini project was born
 
-Installing: 
+![](https://raw.githubusercontent.com/kris-hansen/notioncliadd.gif)
+
+Uses the Python library notion-py (https://github.com/jamalex/notion-py) to access to the Notion 'API' 
+
+##Install 
 
 - Requirements - Python3 and pip install the requirements.txt dependencies 
+- edit dev-env.source.sample and enter your page and token (you can find the token in your browser cookies after a successful Notion login)
 
-Installation - you can run it directly with:
+##Run
+you can run it directly with:
 
 `$ python notioncli.py `
 
