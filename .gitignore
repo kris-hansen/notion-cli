@@ -1,5 +1,0 @@
-dist/*
-__pycache__/*
-build/*
-dev-env.source
-notioncli.spec
