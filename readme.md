@@ -2,7 +2,7 @@
 
 It's a CLI to track your tasks.
 
-For Notion.so
+In a Notion.so page
 
 ![](https://github.com/kris-hansen/notion-cli/blob/master/notionclilist.gif)
 
