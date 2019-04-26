@@ -1,0 +1,3 @@
+#/bin/bash
+export NOTION_TOKEN={your token goes here, get it from an authenticated browser session cookie}
+export NOTION_PAGE='https://www.notion.so/{yourpage goes here}'
