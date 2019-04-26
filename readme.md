@@ -19,7 +19,7 @@ Uses the Python library notion-py (https://github.com/jamalex/notion-py) to acce
 ## Install
 
 - Requirements - Python3 and pip install the requirements.txt dependencies 
-- edit dev-env.source.sample and enter your page and token (you can find the token in your browser cookies after a successful Notion login)
+- Edit dev-env.source.sample and enter your page and token (you can find the token in your browser cookies after a successful Notion login)
 
 ## Run
 
