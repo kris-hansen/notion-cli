@@ -4,7 +4,7 @@ It's a CLI to track your tasks.
 
 For Notion.so
 
-![](https://raw.githubusercontent.com/kris-hansen/notion-cli/master/notionclilist.gif)
+![](https://github.com/kris-hansen/notion-cli/blob/master/notionclilist.gif)
 
 
 In the tune of taskbook (https://github.com/klaussinani/taskbook) which is an npm package that I started using and really enjoyed; but I wanted something that was more portable across my devices and that I could also shared (i.e., it needed a back end)
