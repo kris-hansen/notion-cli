@@ -25,6 +25,15 @@ try:
 except:
     cprint('NOTION_TOKEN / NOTION_PAGE environment variables not set.\n', 'red')
     
+def parse_task(string):
+    taskn = string
+    if isinstance(string, int):
+        taskn = str(taskn)
+    else:
+        if ',' in string:
+            taskn = string.split(',')
+    value = taskn
+    return value
 
 
 parser = argparse.ArgumentParser(description='A Notion.so CLI \
@@ -32,9 +41,9 @@ focused on simple task management')
 parser.add_argument('--env', nargs='?', const=True, default=False, help='Print current relevant environment variables')
 parser.add_argument('--list', nargs='?', const=True, default=False, help='List tasks')
 parser.add_argument('--add', default=False, type=str, help='Usage: --add [str] Add a new task')
-parser.add_argument('--remove', default=False, type=int, help='Usage: --remove [n] Remove task n from the task list')
-parser.add_argument('--check', default=False, type=int, help='Usage: --check [n] check off task n')
-parser.add_argument('--uncheck', default=False, type=int, help='Usage: --segment : Update the OWL / KOHO link \
+parser.add_argument('--remove', default=False, type=parse_task, help='Usage: --remove [n] Remove task n from the task list')
+parser.add_argument('--check', default=False, type=parse_task, help='Usage: --check [n] check off task n')
+parser.add_argument('--uncheck', default=False, type=parse_task, help='Usage: --segment : Update the OWL / KOHO link \
 for the current segmentid (and other environments defined by the current set of environment variables)')
 
 args = parser.parse_args()
@@ -69,11 +78,6 @@ def list():
     cprint('\n{} total tasks'.format(n), 'white', attrs=['bold'])
 
 def check(taskn):
-    if isinstance(taskn, int):
-        taskn = str(taskn)
-    else:
-        if ',' in taskn:
-            taskn = taskn.split(',')
     n = 0
     for child in page.children:
         n += 1
@@ -137,21 +141,12 @@ if args.add:
     add(str(args.add))
 
 if args.check:
-    if isinstance(args.check, int):
-        check(args.check)
-    else:
-        cprint('Check requires an int argument for task number','white', attrs=['bold'])
+    check(args.check)
 
 if args.uncheck:
-    if isinstance(args.uncheck, int):
-        uncheck(args.uncheck)
-    else:
-        cprint('Uncheck requires an int argument for task number','white', attrs=['bold'])
-
+    uncheck(args.uncheck)
 
 if args.remove:
-    if isinstance(args.remove, int):
-        remove(args.remove)
-    else:
-        cprint('Remove requires an int argument for task number','white', attrs=['bold'])
+    remove(args.remove)
+
    
