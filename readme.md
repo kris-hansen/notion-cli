@@ -46,11 +46,9 @@ optional arguments:
   --env [ENV]        Print current relevant environment variables
   --list [LIST]      List tasks
   --add ADD          Usage: --add [str] Add a new task
-  --remove REMOVE    Usage: --remove [n] Remove task n from the task list
-  --check CHECK      Usage: --check [n] check off task n
-  --uncheck UNCHECK  Usage: --segment : Update the OWL / KOHO link for the
-                     current segmentid (and other environments defined by the
-                     current set of environment variables)
+  --remove REMOVE    Usage: --remove [n or 'n,n,n' Remove task n or tasks 'n,n,n' from the task list
+  --check CHECK      Usage: --check [n or 'n,n,n'] check off task n or tasks 'n,n,n' 
+  --uncheck UNCHECK  Usage: --uncheck [n or 'n,n,n'] uncheck task n or tasks 'n,n,n' 
 ```
 
 ## Notes

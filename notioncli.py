@@ -69,23 +69,35 @@ def list():
     cprint('\n{} total tasks'.format(n), 'white', attrs=['bold'])
 
 def check(taskn):
+    if isinstance(taskn, int):
+        taskn = str(taskn)
+    else:
+        if ',' in taskn:
+            taskn = taskn.split(',')
     n = 0
     for child in page.children:
         n += 1
         try:
-            if n == taskn:
-                child.checked = True
+            for task in taskn:
+                if n == int(task):
+                    child.checked = True
         except:
             pass #not a task 
     cprint('{} marked as completed'.format(taskn), 'white', attrs=['bold'])
 
 def uncheck(taskn):
+    if isinstance(taskn, int):
+        taskn = str(taskn)
+    else:
+        if ',' in taskn:
+            taskn = taskn.split(',')
     n = 0
     for child in page.children:
         n += 1
         try:
-            if n == taskn:
-                child.checked = False
+            for task in taskn:
+                if n == int(task):
+                    child.checked = False
         except:
             pass #not a task 
     cprint('{} marked as incomplete'.format(taskn), 'white', attrs=['bold'])
@@ -96,12 +108,18 @@ def add(task):
     cprint('{} added as a new task'.format(task))
 
 def remove(taskn):
+    if isinstance(taskn, int):
+        taskn = str(taskn)
+    else:
+        if ',' in taskn:
+            taskn = taskn.split(',')
     n = 0
     for child in page.children:
         n += 1
         try:
-            if n == taskn:
-                child.remove()      
+            for task in taskn:
+                if n == int(task):
+                    child.remove()      
         except:
             pass #not a task 
     cprint('{} removed.'.format(taskn), 'white', attrs=['bold'])
