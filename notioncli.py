@@ -20,7 +20,7 @@ def captureStdOut(output):
         sys.stdout = stdout
 
 try:
-    client = NotionClient(token_v2=os.environ['NOTION_TOKEN'])
+    client = NotionClient(token_v2=os.environ['NOTION_TOKEN'], monitor=False)
     page = client.get_block(os.environ['NOTION_PAGE'])
 except:
     cprint('NOTION_TOKEN / NOTION_PAGE environment variables not set.\n', 'red')
