@@ -21,9 +21,13 @@ def captureStdOut(output):
 
 try:
     client = NotionClient(token_v2=os.environ['NOTION_TOKEN'], monitor=False)
+except:
+    cprint('NOTION_TOKEN / NOTION_PAGE environment variables not set or token expired.\n', 'red')
+try:
     page = client.get_block(os.environ['NOTION_PAGE'])
 except:
-    cprint('NOTION_TOKEN / NOTION_PAGE environment variables not set.\n', 'red')
+    cprint('NOTION_PAGE environment variables not set.\n', 'red')
+
     
 def parse_task(string):
     taskn = string
