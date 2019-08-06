@@ -46,9 +46,8 @@ parser.add_argument('--env', nargs='?', const=True, default=False, help='Print c
 parser.add_argument('--list', nargs='?', const=True, default=False, help='List tasks')
 parser.add_argument('--add', default=False, type=str, help='Usage: --add [str] Add a new task')
 parser.add_argument('--remove', default=False, type=parse_task, help='Usage: --remove [n] Remove task n from the task list')
-parser.add_argument('--check', default=False, type=parse_task, help='Usage: --check [n] check off task n')
-parser.add_argument('--uncheck', default=False, type=parse_task, help='Usage: --segment : Update the OWL / KOHO link \
-for the current segmentid (and other environments defined by the current set of environment variables)')
+parser.add_argument('--check', default=False, type=parse_task, help='Usage: --check [n] mark n as completed')
+parser.add_argument('--uncheck', default=False, type=parse_task, help='Usage: --uncheck[n] to mark as incomplete')
 
 args = parser.parse_args()
 
