@@ -45,9 +45,9 @@ focused on simple task management')
 parser.add_argument('--env', nargs='?', const=True, default=False, help='Print current relevant environment variables')
 parser.add_argument('--list', nargs='?', const=True, default=False, help='List tasks')
 parser.add_argument('--add', default=False, type=str, help='Usage: --add [str] Add a new task')
-parser.add_argument('--remove', default=False, type=parse_task, help='Usage: --remove [n] Remove task n from the task list')
-parser.add_argument('--check', default=False, type=parse_task, help='Usage: --check [n] mark n as completed')
-parser.add_argument('--uncheck', default=False, type=parse_task, help='Usage: --uncheck[n] to mark as incomplete')
+parser.add_argument('--remove', default=False, type=parse_task, help='Usage: --remove [n] (or n,n) remove task n from the task list')
+parser.add_argument('--check', default=False, type=parse_task, help='Usage: --check [n] (or n,n) mark n as completed')
+parser.add_argument('--uncheck', default=False, type=parse_task, help='Usage: --uncheck[n] (or n,n) to mark as incomplete')
 
 args = parser.parse_args()
 
