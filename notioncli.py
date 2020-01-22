@@ -66,6 +66,7 @@ def list():
     cprint('#  Status Description','white',attrs=['underline'])
     for child in page.children:
         n += 1
+        check = '   '
         try:
             if child.checked:
                 check = '[*]'
