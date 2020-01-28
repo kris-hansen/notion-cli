@@ -63,33 +63,31 @@ def list():
     checkEnv()
     n = 0 
     cprint('\n\n{}\n'.format(page.title), 'white', attrs=['bold'])
-    cprint('#  Status Description','white',attrs=['underline'])
+    cprint('  # Status Description','white',attrs=['underline'])
     for child in page.children:
-        n += 1
-        check = '   '
-        try:
+        if child.type == 'sub_header':
+            cprint('[{}]'.format(child.title), 'green')
+        elif child.type == 'to_do':
+            n += 1
             if child.checked:
                 check = '[*]'
             else:
                 check = '[ ]'
-        except:
-            pass #not a task
-        if len(str(n)) <= 1:
-            cprint('  {}   {}  {}.'.format(n, check, child.title), 'green')
-        if len(str(n)) > 1:
             cprint('  {}  {}  {}.'.format(n, check, child.title), 'green')
+        else:
+            pass    
 
     cprint('\n{} total tasks'.format(n), 'white', attrs=['bold'])
 
 def check(taskn):
     n = 0
     for child in page.children:
-        n += 1
-        try:
+        if child.type == 'to_do':
+            n += 1
             for task in taskn:
                 if n == int(task):
                     child.checked = True
-        except:
+        else:
             pass #not a task 
     cprint('{} marked as completed'.format(taskn), 'white', attrs=['bold'])
 
@@ -123,12 +121,12 @@ def remove(taskn):
             taskn = taskn.split(',')
     n = 0
     for child in page.children:
-        n += 1
-        try:
+        if child.type =='to_do':
+            n += 1
             for task in taskn:
                 if n == int(task):
                     child.remove()      
-        except:
+        else:
             pass #not a task 
     cprint('{} removed.'.format(taskn), 'white', attrs=['bold'])
 
