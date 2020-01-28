@@ -63,7 +63,7 @@ def list():
     checkEnv()
     n = 0 
     cprint('\n\n{}\n'.format(page.title), 'white', attrs=['bold'])
-    cprint('#  Status Description','white',attrs=['underline'])
+    cprint('  # Status Description','white',attrs=['underline'])
     for child in page.children:
         if child.type == 'sub_header':
             cprint('[{}]'.format(child.title), 'green')
@@ -82,12 +82,12 @@ def list():
 def check(taskn):
     n = 0
     for child in page.children:
-        n += 1
-        try:
+        if child.type == 'to_do':
+            n += 1
             for task in taskn:
                 if n == int(task):
                     child.checked = True
-        except:
+        else:
             pass #not a task 
     cprint('{} marked as completed'.format(taskn), 'white', attrs=['bold'])
 
@@ -121,12 +121,12 @@ def remove(taskn):
             taskn = taskn.split(',')
     n = 0
     for child in page.children:
-        n += 1
-        try:
+        if child.type =='to_do':
+            n += 1
             for task in taskn:
                 if n == int(task):
                     child.remove()      
-        except:
+        else:
             pass #not a task 
     cprint('{} removed.'.format(taskn), 'white', attrs=['bold'])
 
