@@ -1,0 +1,30 @@
+[project]
+name = "notion-cli"
+version = "1.0.0"
+description = "A CLI for notion.io"
+authors = [
+  "Josh Holbrook @jfhbrook <josh.holbrook@gmail.com>",
+  "Kris Hansen @kris-hansen"
+]
+license = "proprietary"
+readme = "README.md"
+
+dependencies = [
+  "notion",
+  "termcolor"
+]
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "google"
+known_first_party = []
+known_application = [ "notioncli" ]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = "E203"
+
+[tool.pyright]
+include = ["notioncli"]

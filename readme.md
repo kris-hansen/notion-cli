@@ -6,37 +6,96 @@ In a Notion.so page
 
 ![](https://github.com/kris-hansen/notion-cli/blob/master/notionclilist.gif)
 
-In the tune of taskbook (https://github.com/klaussinani/taskbook) which is an npm package that I started using and really enjoyed; but I wanted something that was more portable across my devices and that I could also shared (i.e., it needed a back end)
+In the tune of taskbook (https://github.com/klaussinani/taskbook) which is an npm package that I started using and really enjoyed; but I wanted something that was more portable across my devices and that I could also shared (i.e., it needed a back end).
 
-I started looking at Notion for this, but wanted to stay in CLI land vs. having to task back to bright colours to check my code to do's
+I started looking at Notion for this, but wanted to stay in CLI land vs. having to task back to bright colours to check my code to do's.
 
-Thus, this mini project was born
+Thus, this mini project was born!
 
 ![](https://github.com/kris-hansen/notion-cli/blob/master/notioncliadd.gif)
 
-Uses the Python library notion-py (https://github.com/jamalex/notion-py) to access to the Notion 'API'
+Uses the Python library [notion-py](https://github.com/jamalex/notion-py) to access to the Notion 'API'.
 
 ## Install
 
-- Requirements - Python3 and pip install the requirements.txt dependencies 
-- Edit dev-env.source.sample and enter your page and token (you can find the token in your browser cookies after a successful Notion login)
+### pip
+
+You can install from git with pip:
+
+```sh
+pip install --user git+https://github.com/kris-hansen/notion-cli@latest
+```
+
+### git + virtualenv
+
+First, make sure you have a recent Python 3 in your path. Ubuntu and other Linux
+distributions should already have it installed. On MacOS, you can run
+`brew install python`. For Windows, you're on your own - though note that
+building the pyinstaller bundle isn't supported on Conda.
+
+To set up the virtualenv, run `make setup`.
+
+To source the virtualenv after it's built, run `source ./venv/bin/activate` in
+bash.
+
+### pyinstaller bundle
+
+Once you have the git/virtualenv install set up, you may generate a portable
+single-file bin via pyinstaller by running `make build`. Note that the
+pyinstaller build is quite slow to boot!
+
+## Configuration
+
+In order to run this tool, you need to define two environment variables:
+
+- `NOTION_TOKEN` - This is the API token for the API client
+- `NOTION_PAGE` - This is the URL for the page (ex: https://notion.so/my-page)
+
+To get the `NOTION_TOKEN`, you'll need to:
+
+- Log into notion in your web browser
+- Crack open the dev console
+- Dig through your browser cookies
+- Copy-paste it on out
+
+See the notion-py documentation for more details.
+
+For convenience, this project includes an example env file that you can use as
+a template:
+
+```bash
+cp dev-env.source.sample .env
+${EDITOR} .env  # Fill in the fields
+```
 
 ## Run
 
-you can run it directly with:
+To run the tool, ensure that the virtualenv is set up and the env file is
+loaded:
 
-`$ python notioncli.py`
+```bash
+source ./venv/bin/activate
+source .env
 
-or
+notion --help
+```
 
-build it into an executable with:
+For convenience, you may want to put a shim in your path:
 
-`pyinstaller --onefile notioncli.py`
+```bash
+#!/usr/bin/env bash
 
-and then cp the binary from the ./dist folder to somewhere in your path
+source ${HOME}/notion-cli/venv/bin/activate
+source ${HOME]/.config/notion/notion.env
 
-```$ notioncli --help
-usage: notioncli [-h] [--env [ENV]] [--list [LIST]] [--add ADD]
+exec notion "$@"
+```
+
+A good location for this script may be `~/.local/bin/notion`.
+
+```bash
+$ notion --help
+usage: notion [-h] [--env [ENV]] [--list [LIST]] [--add ADD]
                  [--remove REMOVE] [--check CHECK] [--uncheck UNCHECK]
 
 A Notion.so CLI focused on simple task management
@@ -51,13 +110,7 @@ optional arguments:
   --uncheck UNCHECK  Usage: --uncheck [n or 'n,n,n'] uncheck task n or tasks 'n,n,n' 
 ```
 
-## Notes
+## Known Issues
 
-- The pyinstaller packager does not work with conda/miniconda
-- PY3.5 tested
-
-## Future to-dos
-
-- I think it needs to be faster, I have considered rewriting in go; not sure how much of the delay is related to runtime (pyinstaller packaging efficiency)
-vs network/Notion 'API' delays
-- Multiple pages, one per project
+- The pyinstaller build's boot time is very long. The workaround is to install from pip; an alternate solution may be a go rewrite.
+- The tool only supports one page right now.
