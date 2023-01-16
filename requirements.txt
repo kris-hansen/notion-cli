@@ -1,3 +1,5 @@
-notion
-termcolor
-pyinstaller
+notion==0.0.28
+termcolor==1.1.0
+black==21.12b0
+isort==5.10.1
+pyinstaller==4.7
