@@ -1,5 +1,5 @@
-notion==0.0.28
+notion-client==2.0.0
 termcolor==1.1.0
-black==21.12b0
-isort==5.10.1
+pytz
 pyinstaller==4.7
+pytest==7.3.0

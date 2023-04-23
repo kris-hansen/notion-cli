@@ -8,3 +8,6 @@ format:
 
 build:
 	source ./venv/bin/activate && pyinstaller -n notion --onefile cli.py
+
+test:
+	source ./venv/bin/activate && pytest

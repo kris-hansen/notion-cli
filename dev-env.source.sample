@@ -1,3 +1,4 @@
 #/bin/bash
-export NOTION_TOKEN={your token goes here, get it from an authenticated browser session cookie}
-export NOTION_PAGE='https://www.notion.so/{yourpage goes here}'
+export NOTION_API_KEY={your token goes here, get it from an authenticated browser session cookie}
+export NOTION_PAGE_ID='https://www.notion.so/{yourpage goes here}'
+export LOCAL_TIMEZONE='US/Eastern' # or whatever your local timezone is

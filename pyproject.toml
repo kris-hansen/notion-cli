@@ -1,16 +1,18 @@
 [project]
 name = "notion-cli"
-version = "1.0.0"
+version = "1.0.1"
 description = "A CLI for notion.io"
+license = { text = "MIT License" }
 authors = [
-  "Josh Holbrook @jfhbrook <josh.holbrook@gmail.com>",
-  "Kris Hansen @kris-hansen"
+    { name = "Josh Holbrook", email = "josh.holbrook@gmail.com"},
+    { name = "Kris Hansen", email = "delight.fillet-0v@icloud.com"}
 ]
-license = "proprietary"
 readme = "README.md"
 
+
 dependencies = [
-  "notion",
+  "notion-client",
+  "pytz",
   "termcolor"
 ]
 
