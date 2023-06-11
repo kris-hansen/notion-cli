@@ -1,5 +1,7 @@
 # *Notion CLI*
 
+If you like this project, you might also like my other version of this [notion-cli-go] (https://github.com/kris-hansen/notion-cli-go) which is sort of the same but written in go for easier compilation and portability.
+
 It's a CLI to track your tasks.
 
 In a Notion page
