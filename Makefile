@@ -1,13 +1,42 @@
-.PHONY: setup format build
+.PHONY: setup install dev test lint format build clean
 
+# Create virtual environment and install dependencies
 setup:
-	python3 -m venv ./venv && source ./venv/bin/activate && pip install pip --upgrade && pip install -r requirements.txt && pip install -e . || rm -r venv
+	python3 -m venv venv
+	./venv/bin/pip install --upgrade pip
+	./venv/bin/pip install -e ".[dev]"
 
-format:
-	source ./venv/bin/activate && isort . && black .
+# Install in development mode
+install:
+	pip install -e .
 
-build:
-	source ./venv/bin/activate && pyinstaller -n notion --onefile cli.py
+# Install with dev dependencies
+dev:
+	pip install -e ".[dev]"
 
+# Run tests
 test:
-	source ./venv/bin/activate && pytest
+	pytest tests/ -v
+
+# Run linters
+lint:
+	ruff check notioncli/
+	black --check notioncli/
+
+# Format code
+format:
+	black notioncli/
+	isort notioncli/
+	ruff check --fix notioncli/
+
+# Build standalone executable
+build:
+	pyinstaller --onefile --name notion cli.py
+
+# Clean build artifacts
+clean:
+	rm -rf build/ dist/ *.spec
+	rm -rf __pycache__ notioncli/__pycache__
+	rm -rf *.egg-info
+	rm -rf .pytest_cache .ruff_cache
+	find . -name "*.pyc" -delete

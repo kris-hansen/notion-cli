@@ -1,5 +1,11 @@
-notion-client==2.0.0
-termcolor==1.1.0
-pytz
-pyinstaller==5.13.1
-pytest==7.3.0
+# Core dependencies
+notion-client>=3.0.0
+termcolor>=2.4.0
+pytz>=2024.1
+
+# Development dependencies
+pytest>=8.0.0
+pyinstaller>=6.0.0
+black>=24.0.0
+isort>=5.13.0
+ruff>=0.3.0
