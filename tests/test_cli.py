@@ -10,12 +10,16 @@ import pytest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from notioncli.cli import (
+    add_block,
     add_todo,
+    delete_block,
     delete_todo,
     get_block_by_index,
+    get_block_content,
     get_blocks,
     get_config,
     get_page,
+    list_all_blocks,
     list_todos,
     mark_todo_checked,
     main,
@@ -444,3 +448,301 @@ class TestEdgeCases:
         assert todos_utc[0]["content"] == todos_la[0]["content"]
         assert "UTC" in todos_utc[0]["created"]
         assert "PST" in todos_la[0]["created"] or "PDT" in todos_la[0]["created"]
+
+
+# === New Block Types Tests ===
+
+SAMPLE_HEADING_BLOCK = {
+    "object": "block",
+    "id": "heading-block-1",
+    "type": "heading_1",
+    "created_time": "2024-01-04T12:00:00.000Z",
+    "heading_1": {
+        "rich_text": [{"plain_text": "My Heading"}],
+    },
+}
+
+SAMPLE_BULLET_BLOCK = {
+    "object": "block",
+    "id": "bullet-block-1",
+    "type": "bulleted_list_item",
+    "created_time": "2024-01-05T12:00:00.000Z",
+    "bulleted_list_item": {
+        "rich_text": [{"plain_text": "Bullet point"}],
+    },
+}
+
+SAMPLE_DIVIDER_BLOCK = {
+    "object": "block",
+    "id": "divider-block-1",
+    "type": "divider",
+    "created_time": "2024-01-06T12:00:00.000Z",
+    "divider": {},
+}
+
+
+class TestGetBlockContent:
+    """Tests for get_block_content function."""
+
+    def test_get_todo_content(self):
+        """Test extracting content from to-do block."""
+        content = get_block_content(SAMPLE_TODO_BLOCK)
+        assert content == "Test task 1"
+
+    def test_get_paragraph_content(self):
+        """Test extracting content from paragraph block."""
+        content = get_block_content(SAMPLE_PARAGRAPH_BLOCK)
+        assert content == "Just a paragraph"
+
+    def test_get_heading_content(self):
+        """Test extracting content from heading block."""
+        content = get_block_content(SAMPLE_HEADING_BLOCK)
+        assert content == "My Heading"
+
+    def test_get_divider_content(self):
+        """Test extracting content from divider block."""
+        content = get_block_content(SAMPLE_DIVIDER_BLOCK)
+        assert "─" in content  # Divider line
+
+    def test_get_empty_content(self):
+        """Test extracting content from block with no text."""
+        empty_block = {
+            "type": "paragraph",
+            "paragraph": {"rich_text": []},
+        }
+        content = get_block_content(empty_block)
+        assert content == "(empty)"
+
+
+class TestListAllBlocks:
+    """Tests for list_all_blocks function."""
+
+    def test_list_all_blocks_success(self):
+        """Test listing all blocks."""
+        notion = MagicMock()
+        notion.blocks.children.list.return_value = {
+            "results": [SAMPLE_TODO_BLOCK, SAMPLE_PARAGRAPH_BLOCK, SAMPLE_HEADING_BLOCK]
+        }
+
+        blocks = list_all_blocks(notion, SAMPLE_PAGE, "UTC")
+
+        assert len(blocks) == 3
+        assert blocks[0]["type"] == "to_do"
+        assert blocks[1]["type"] == "paragraph"
+        assert blocks[2]["type"] == "heading_1"
+
+    def test_list_all_blocks_with_filter(self):
+        """Test listing blocks with type filter."""
+        notion = MagicMock()
+        notion.blocks.children.list.return_value = {
+            "results": [SAMPLE_TODO_BLOCK, SAMPLE_PARAGRAPH_BLOCK, SAMPLE_HEADING_BLOCK]
+        }
+
+        blocks = list_all_blocks(notion, SAMPLE_PAGE, "UTC", filter_type="heading_1")
+
+        assert len(blocks) == 1
+        assert blocks[0]["type"] == "heading_1"
+        assert blocks[0]["content"] == "My Heading"
+
+    def test_list_all_blocks_empty(self):
+        """Test empty blocks list."""
+        notion = MagicMock()
+        notion.blocks.children.list.return_value = {"results": []}
+
+        blocks = list_all_blocks(notion, SAMPLE_PAGE, "UTC")
+
+        assert blocks == []
+
+    def test_list_all_blocks_includes_icons(self):
+        """Test that blocks have correct icons."""
+        notion = MagicMock()
+        notion.blocks.children.list.return_value = {
+            "results": [SAMPLE_TODO_BLOCK, SAMPLE_HEADING_BLOCK]
+        }
+
+        blocks = list_all_blocks(notion, SAMPLE_PAGE, "UTC")
+
+        assert blocks[0]["icon"] == "☐"  # Unchecked to-do
+        assert blocks[1]["icon"] == "H1"  # Heading 1
+
+
+class TestAddBlock:
+    """Tests for add_block function."""
+
+    def test_add_paragraph(self, capsys):
+        """Test adding a paragraph block."""
+        notion = MagicMock()
+
+        add_block(notion, "Hello world", "test-page-id", "paragraph")
+
+        notion.blocks.children.append.assert_called_once()
+        call_args = notion.blocks.children.append.call_args
+        children = call_args[1]["children"]
+        
+        assert children[0]["type"] == "paragraph"
+        assert children[0]["paragraph"]["rich_text"][0]["text"]["content"] == "Hello world"
+
+        captured = capsys.readouterr()
+        assert "paragraph" in captured.out
+        assert "Hello world" in captured.out
+
+    def test_add_heading(self, capsys):
+        """Test adding a heading block."""
+        notion = MagicMock()
+
+        add_block(notion, "My Title", "test-page-id", "heading_1")
+
+        call_args = notion.blocks.children.append.call_args
+        children = call_args[1]["children"]
+        
+        assert children[0]["type"] == "heading_1"
+        assert children[0]["heading_1"]["rich_text"][0]["text"]["content"] == "My Title"
+
+    def test_add_divider(self, capsys):
+        """Test adding a divider block."""
+        notion = MagicMock()
+
+        add_block(notion, "", "test-page-id", "divider")
+
+        call_args = notion.blocks.children.append.call_args
+        children = call_args[1]["children"]
+        
+        assert children[0]["type"] == "divider"
+        assert "divider" in children[0]
+
+    def test_add_bulleted_list(self, capsys):
+        """Test adding a bulleted list item."""
+        notion = MagicMock()
+
+        add_block(notion, "List item", "test-page-id", "bulleted_list_item")
+
+        call_args = notion.blocks.children.append.call_args
+        children = call_args[1]["children"]
+        
+        assert children[0]["type"] == "bulleted_list_item"
+
+
+class TestDeleteBlock:
+    """Tests for delete_block function."""
+
+    def test_delete_block_success(self, capsys):
+        """Test deleting any block type."""
+        notion = MagicMock()
+        notion.blocks.children.list.return_value = {
+            "results": [SAMPLE_PARAGRAPH_BLOCK]
+        }
+
+        delete_block(notion, SAMPLE_PAGE, 1)
+
+        notion.blocks.delete.assert_called_once_with("block-id-3")
+
+        captured = capsys.readouterr()
+        assert "Deleted" in captured.out
+        assert "paragraph" in captured.out
+
+
+class TestBlocksCommands:
+    """Tests for blocks subcommand in main."""
+
+    @pytest.fixture
+    def mock_env(self):
+        """Set up environment variables for tests."""
+        env = {
+            "NOTION_API_KEY": "test-api-key",
+            "NOTION_PAGE_ID": "test-page-id",
+        }
+        with patch.dict(os.environ, env, clear=True):
+            yield
+
+    def test_blocks_list(self, mock_env, capsys):
+        """Test blocks list command."""
+        with patch("sys.argv", ["notion", "blocks", "list"]):
+            with patch("notioncli.cli.Client") as mock_client:
+                mock_notion = MagicMock()
+                mock_client.return_value = mock_notion
+                mock_notion.pages.retrieve.return_value = SAMPLE_PAGE
+                mock_notion.blocks.children.list.return_value = {
+                    "results": [SAMPLE_TODO_BLOCK, SAMPLE_PARAGRAPH_BLOCK]
+                }
+
+                main()
+
+                captured = capsys.readouterr()
+                assert "to_do" in captured.out
+                assert "paragraph" in captured.out
+
+    def test_blocks_list_with_filter(self, mock_env, capsys):
+        """Test blocks list with type filter."""
+        with patch("sys.argv", ["notion", "blocks", "list", "--type", "to_do"]):
+            with patch("notioncli.cli.Client") as mock_client:
+                mock_notion = MagicMock()
+                mock_client.return_value = mock_notion
+                mock_notion.pages.retrieve.return_value = SAMPLE_PAGE
+                mock_notion.blocks.children.list.return_value = {
+                    "results": [SAMPLE_TODO_BLOCK, SAMPLE_PARAGRAPH_BLOCK]
+                }
+
+                main()
+
+                captured = capsys.readouterr()
+                assert "to_do" in captured.out
+                # Paragraph should be filtered out (not in summary)
+
+    def test_blocks_add_paragraph(self, mock_env, capsys):
+        """Test blocks add command for paragraph."""
+        with patch("sys.argv", ["notion", "blocks", "add", "New paragraph"]):
+            with patch("notioncli.cli.Client") as mock_client:
+                mock_notion = MagicMock()
+                mock_client.return_value = mock_notion
+                mock_notion.pages.retrieve.return_value = SAMPLE_PAGE
+
+                main()
+
+                mock_notion.blocks.children.append.assert_called_once()
+                captured = capsys.readouterr()
+                assert "paragraph" in captured.out
+
+    def test_blocks_add_heading(self, mock_env, capsys):
+        """Test blocks add command for heading."""
+        with patch("sys.argv", ["notion", "blocks", "add", "My Heading", "-t", "heading_1"]):
+            with patch("notioncli.cli.Client") as mock_client:
+                mock_notion = MagicMock()
+                mock_client.return_value = mock_notion
+                mock_notion.pages.retrieve.return_value = SAMPLE_PAGE
+
+                main()
+
+                call_args = mock_notion.blocks.children.append.call_args
+                children = call_args[1]["children"]
+                assert children[0]["type"] == "heading_1"
+
+    def test_blocks_delete(self, mock_env, capsys):
+        """Test blocks delete command."""
+        with patch("sys.argv", ["notion", "blocks", "delete", "1"]):
+            with patch("notioncli.cli.Client") as mock_client:
+                mock_notion = MagicMock()
+                mock_client.return_value = mock_notion
+                mock_notion.pages.retrieve.return_value = SAMPLE_PAGE
+                mock_notion.blocks.children.list.return_value = {
+                    "results": [SAMPLE_PARAGRAPH_BLOCK]
+                }
+
+                main()
+
+                mock_notion.blocks.delete.assert_called_once()
+
+    def test_blocks_alias_works(self, mock_env, capsys):
+        """Test that 'b' alias works for blocks."""
+        with patch("sys.argv", ["notion", "b", "list"]):
+            with patch("notioncli.cli.Client") as mock_client:
+                mock_notion = MagicMock()
+                mock_client.return_value = mock_notion
+                mock_notion.pages.retrieve.return_value = SAMPLE_PAGE
+                mock_notion.blocks.children.list.return_value = {
+                    "results": [SAMPLE_TODO_BLOCK]
+                }
+
+                main()
+
+                captured = capsys.readouterr()
+                assert "to_do" in captured.out
