@@ -1,32 +1,77 @@
 [project]
 name = "notion-cli"
-version = "1.0.1"
-description = "A CLI for notion.io"
-license = { text = "MIT License" }
+version = "1.1.0"
+description = "A CLI for Notion.so - manage tasks and more from your terminal"
+license = { text = "MIT" }
 authors = [
-    { name = "Josh Holbrook", email = "josh.holbrook@gmail.com"},
-    { name = "Kris Hansen", email = "delight.fillet-0v@icloud.com"}
+    { name = "Kris Hansen", email = "kris@4utopia.com" },
+    { name = "Josh Holbrook", email = "josh.holbrook@gmail.com" }
 ]
-readme = "README.md"
-
+readme = "readme.md"
+requires-python = ">=3.9"
+keywords = ["notion", "cli", "tasks", "todo", "productivity"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Utilities",
+]
 
 dependencies = [
-  "notion-client",
-  "pytz",
-  "termcolor"
+    "notion-client>=3.0.0",
+    "pytz>=2024.1",
+    "termcolor>=2.4.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pyinstaller>=6.0.0",
+    "black>=24.0.0",
+    "isort>=5.13.0",
+    "ruff>=0.3.0",
+]
+
+[project.scripts]
+notion = "notioncli.cli:main"
+notion-cli = "notioncli.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/kris-hansen/notion-cli"
+Repository = "https://github.com/kris-hansen/notion-cli"
+Issues = "https://github.com/kris-hansen/notion-cli/issues"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["notioncli*"]
 
 [tool.black]
 line-length = 88
+target-version = ["py39", "py310", "py311", "py312"]
 
 [tool.isort]
-profile = "google"
-known_first_party = []
-known_application = [ "notioncli" ]
+profile = "black"
+known_first_party = ["notioncli"]
 
-[tool.flake8]
-max-line-length = 88
-extend-ignore = "E203"
+[tool.ruff]
+line-length = 88
+target-version = "py39"
 
-[tool.pyright]
-include = ["notioncli"]
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
